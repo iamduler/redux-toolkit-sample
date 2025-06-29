@@ -46,9 +46,14 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## Step by step
-yarn create react-app rtk-sample --template typescript
-yarn add -D prettier eslint-plugin-prettier eslint-config-prettier
-yarn add tailwindcss@3 postcss autoprefixer
-npx tailwindcss init -p
-yarn add -D prettier-plugin-tailwindcss
-yarn add @reduxjs/toolkit react-redux
+### `yarn create react-app rtk-sample --template typescript`
+
+### `yarn add -D prettier eslint-plugin-prettier eslint-config-prettier`
+
+### `yarn add tailwindcss@3 postcss autoprefixer`
+
+### `npx tailwindcss init -p`
+
+### `yarn add -D prettier-plugin-tailwindcss`
+
+### `yarn add @reduxjs/toolkit react-redux`
