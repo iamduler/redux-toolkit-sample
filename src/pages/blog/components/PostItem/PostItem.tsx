@@ -2,8 +2,8 @@ import { Post } from 'types/blog.type';
 
 interface PostItemType {
   post: Post;
-  handleDelete: (postId: number) => void;
-  handleStartEditing: (postId: number) => void;
+  handleDelete: (postId: string) => void;
+  handleStartEditing: (postId: string) => void;
 }
 
 export default function PostItem({ post, handleDelete, handleStartEditing }: PostItemType) {

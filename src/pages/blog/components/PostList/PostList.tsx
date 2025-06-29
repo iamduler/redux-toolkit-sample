@@ -6,8 +6,8 @@ import { deletePost, startEditingPost } from 'pages/blog/blog.reducer';
 export default function PostList() {
   const postList = useSelector((state: RootState) => state.blog.postList);
   const dispatch = useDispatch();
-  const handleDelete = (postId: number) => dispatch(deletePost(postId));
-  const handleStartEditing = (postId: number) => dispatch(startEditingPost(postId));
+  const handleDelete = (postId: string) => dispatch(deletePost(postId));
+  const handleStartEditing = (postId: string) => dispatch(startEditingPost(postId));
 
   return (
     <div className='bg-white py-6 sm:py-8 lg:py-12'>
