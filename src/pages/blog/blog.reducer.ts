@@ -1,4 +1,4 @@
-import { createAction, createReducer, current } from '@reduxjs/toolkit';
+import { createAction, createReducer, current, PayloadAction } from '@reduxjs/toolkit';
 import { initialPostList } from 'constants/blog';
 import { Post } from 'types/blog.type';
 
@@ -18,6 +18,7 @@ export const startEditingPost = createAction<number>('blog/startEditingPost')
 export const cancelEditingPost = createAction('blog/cancelEditingPost')
 export const finishEditingPost = createAction<Post>('blog/finishEditingPost')
 
+// Builder callback
 const blogReducer = createReducer(initialState, (builder) => {
   builder.addCase(addPost, (state, action) => {
     // Redux Toolkit using immerJS to mutate the state
@@ -59,5 +60,43 @@ const blogReducer = createReducer(initialState, (builder) => {
     console.log('Current State:', current(state));
   });
 });
+
+// Map object
+// const blogReducer = createReducer(initialState, {
+//   [addPost.type]: (state: BlogState, action: PayloadAction<Post>) => {
+//     // Redux Toolkit using immerJS to mutate the state
+//     state.postList.push(action.payload);
+//   },
+
+//   [deletePost.type]: (state: BlogState, action: PayloadAction<number>) => {
+//     const postId = action.payload;
+//     const foundPostIndex = state.postList.findIndex((post) => post.id === postId);
+//     if (foundPostIndex !== -1) {
+//       state.postList.splice(foundPostIndex, 1);
+//     }
+//   },
+
+//   [startEditingPost.type]: (state: BlogState, action: PayloadAction<number>) => {
+//     const postId = action.payload;
+//     const foundPost = state.postList.find((post) => post.id === postId) || null;
+//     state.editingPost = foundPost;
+//   },
+
+//   [cancelEditingPost.type]: (state: BlogState) => {
+//     state.editingPost = null;
+//   },
+
+//   [finishEditingPost.type]: (state: BlogState, action: PayloadAction<Post>) => {
+//     const postId = action.payload.id;
+//     state.postList.some((post, index) => {
+//       if (post.id === postId) {
+//         state.postList[index] = action.payload;
+//         state.editingPost = null;
+//         return true;
+//       }
+//       return false;
+//     });
+//   },
+// });
 
 export default blogReducer
