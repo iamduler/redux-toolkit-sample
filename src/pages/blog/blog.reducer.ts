@@ -1,4 +1,4 @@
-import { createAction, createReducer } from '@reduxjs/toolkit';
+import { createAction, createReducer, current } from '@reduxjs/toolkit';
 import { initialPostList } from 'constants/blog';
 import { Post } from 'types/blog.type';
 
@@ -52,6 +52,11 @@ const blogReducer = createReducer(initialState, (builder) => {
       }
       return false;
     });
+  });
+
+  builder.addMatcher((action) => action.type.startsWith('blog/'), (state, action) => {
+    console.log('Action:', action.type);
+    console.log('Current State:', current(state));
   });
 });
 
