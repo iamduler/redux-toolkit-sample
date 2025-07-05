@@ -3,6 +3,7 @@ import PostItem from '../PostItem';
 import { RootState, useAppDispatch } from 'store';
 import { deletePost, getPostList, startEditingPost } from 'pages/blog/blog.slice';
 import { useEffect } from 'react';
+import SkeletonPost from '../SkeletonPost';
 
 // Call API in useEffect()
 // If success, then dispatch an action type: "blog/getPostListSuccess"
@@ -10,6 +11,7 @@ import { useEffect } from 'react';
 
 export default function PostList() {
   const postList = useSelector((state: RootState) => state.blog.postList);
+  const loading = useSelector((state: RootState) => state.blog.loading);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -34,7 +36,14 @@ export default function PostList() {
           </p>
         </div>
         <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-          {postList.map((post) => (
+          {loading && (
+            <>
+              <SkeletonPost />
+              <SkeletonPost />
+              <SkeletonPost />
+            </>
+          )}
+          {!loading && postList.map((post) => (
             <PostItem key={post.id} post={post} handleDelete={handleDelete} handleStartEditing={handleStartEditing} />
           ))}
         </div>

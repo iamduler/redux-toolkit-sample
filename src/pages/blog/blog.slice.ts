@@ -1,16 +1,27 @@
-import { createAsyncThunk, createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit';
+import { AsyncThunk, createAsyncThunk, createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { Post } from 'types/blog.type';
 import http from 'utils/http';
 
 interface BlogState {
   postList: Post[];
   editingPost: Post | null;
+  loading: boolean;
+  currentRequestId: undefined | string
 }
 
 const initialState: BlogState = {
   postList: [],
-  editingPost: null
+  editingPost: null,
+  loading: false,
+  currentRequestId: undefined
 };
+
+// Support to using addMatcher with AysncThunk
+type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>
+
+type PendingAction = ReturnType<GenericAsyncThunk['pending']>
+type RejectedAction = ReturnType<GenericAsyncThunk['rejected']>
+type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>
 
 export const getPostList = createAsyncThunk(
   'blog/getPostList',
@@ -88,9 +99,17 @@ const blogSlice = createSlice({
           state.postList.splice(deletePostIndex, 1)
         }
       })
-      .addMatcher((action) => action.type.startsWith('blog/'), (state, action) => {
-        console.log('Action:', action.type);
-        console.log('Current State:', current(state));
+      .addMatcher<PendingAction>((action) => action.type.endsWith('/pending'), (state, action) => {
+        state.loading = true
+        state.currentRequestId = action.meta.requestId
+      })
+      .addMatcher<RejectedAction | FulfilledAction>(
+        (action) => action.type.endsWith('/rejected') || action.type.endsWith('/fulfilled'), 
+        (state, action) => {
+        if (state.loading && state.currentRequestId === action.meta.requestId) {
+          state.loading = false
+          state.currentRequestId = undefined
+        }
       })
       .addDefaultCase((state, action) => {
         console.log('Default Case:', action.type);

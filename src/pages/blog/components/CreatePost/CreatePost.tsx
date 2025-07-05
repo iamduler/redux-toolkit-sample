@@ -18,6 +18,7 @@ export default function CreatePost() {
 
   // Get the editing post from the store -> useSelector
   const editingPost = useSelector((state: RootState) => state.blog.editingPost)
+  const loading = useSelector((state: RootState) => state.blog.loading)
 
   const dispatch = useAppDispatch();
   
