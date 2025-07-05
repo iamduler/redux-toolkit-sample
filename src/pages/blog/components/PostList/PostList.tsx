@@ -1,10 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PostItem from '../PostItem';
-import { RootState } from 'store';
-import { deletePost, startEditingPost } from 'pages/blog/blog.slice';
+import { RootState, useAppDispatch } from 'store';
+import { deletePost, getPostList, startEditingPost } from 'pages/blog/blog.slice';
 import { useEffect } from 'react';
-import http from 'utils/http';
-import axios from 'axios';
 
 // Call API in useEffect()
 // If success, then dispatch an action type: "blog/getPostListSuccess"
@@ -12,40 +10,14 @@ import axios from 'axios';
 
 export default function PostList() {
   const postList = useSelector((state: RootState) => state.blog.postList);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // Using AbortController to prevent call API too many times
-    const controller = new AbortController()
-
-    http.get('posts', {
-      signal: controller.signal
-    })
-    .then(res => {
-      console.log(res)
-      const postListResult = res.data
-      dispatch({
-        type: 'blog/getPostListSuccess',
-        payload: postListResult
-      })
-    })
-    .catch(err => {
-      if (axios.isCancel(err)) {
-        console.log('Request canceled')
-      }
-      else {
-        console.error(err)
-        
-        dispatch({
-          type: 'blog/getPostListFailed',
-          payload: err
-        })
-      }
-    })
+    const promise = dispatch(getPostList())
 
     return () => {
-      // Using clean-up function
-      controller.abort()
+      // Clean up function
+      promise.abort()
     }
   }, [dispatch])
 
