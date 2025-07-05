@@ -2,10 +2,53 @@ import { useDispatch, useSelector } from 'react-redux';
 import PostItem from '../PostItem';
 import { RootState } from 'store';
 import { deletePost, startEditingPost } from 'pages/blog/blog.slice';
+import { useEffect } from 'react';
+import http from 'utils/http';
+import axios from 'axios';
+
+// Call API in useEffect()
+// If success, then dispatch an action type: "blog/getPostListSuccess"
+// If failed, then dispatch an action type: "blog/getPostListFailed"
 
 export default function PostList() {
   const postList = useSelector((state: RootState) => state.blog.postList);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Using AbortController to prevent call API too many times
+    const controller = new AbortController()
+
+    http.get('posts', {
+      signal: controller.signal
+    })
+    .then(res => {
+      console.log(res)
+      const postListResult = res.data
+      dispatch({
+        type: 'blog/getPostListSuccess',
+        payload: postListResult
+      })
+    })
+    .catch(err => {
+      if (axios.isCancel(err)) {
+        console.log('Request canceled')
+      }
+      else {
+        console.error(err)
+        
+        dispatch({
+          type: 'blog/getPostListFailed',
+          payload: err
+        })
+      }
+    })
+
+    return () => {
+      // Using clean-up function
+      controller.abort()
+    }
+  }, [dispatch])
+
   const handleDelete = (postId: string) => dispatch(deletePost(postId));
   const handleStartEditing = (postId: string) => dispatch(startEditingPost(postId));
 

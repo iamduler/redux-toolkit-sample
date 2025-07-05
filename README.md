@@ -57,3 +57,5 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ### `yarn add -D prettier-plugin-tailwindcss`
 
 ### `yarn add @reduxjs/toolkit react-redux`
+
+### `yarn add axios`

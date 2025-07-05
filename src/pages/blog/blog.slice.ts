@@ -8,7 +8,7 @@ interface BlogState {
 }
 
 const initialState: BlogState = {
-  postList: initialPostList,
+  postList: [],
   editingPost: null
 };
 
@@ -56,7 +56,11 @@ const blogSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addMatcher((action) => action.type.startsWith('blog/'), (state, action) => {
+    builder
+    .addCase('blog/getPostListSuccess', (state, action: any) => {
+      state.postList = action.payload
+    })
+    .addMatcher((action) => action.type.startsWith('blog/'), (state, action) => {
         console.log('Action:', action.type);
         console.log('Current State:', current(state));
     })
