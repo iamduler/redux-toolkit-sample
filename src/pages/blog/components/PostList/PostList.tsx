@@ -1,13 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux';
 import PostItem from '../PostItem';
-import { RootState } from 'store';
-import { deletePost, startEditingPost } from 'pages/blog/blog.reducer';
+import { useGetPostsQuery } from 'pages/blog/blog.service';
+import SkeletonPost from '../SkeletonPost';
 
 export default function PostList() {
-  const postList = useSelector((state: RootState) => state.blog.postList);
-  const dispatch = useDispatch();
-  const handleDelete = (postId: string) => dispatch(deletePost(postId));
-  const handleStartEditing = (postId: string) => dispatch(startEditingPost(postId));
+  // isLoading: chỉ dành cho lần gọi đầu tiên
+  // isFetching: dành cho lần gọi thứ 2 trở đi
+  const { data, isLoading, isFetching } = useGetPostsQuery();
 
   return (
     <div className='bg-white py-6 sm:py-8 lg:py-12'>
@@ -19,8 +17,15 @@ export default function PostList() {
           </p>
         </div>
         <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-          {postList.map((post) => (
-            <PostItem key={post.id} post={post} handleDelete={handleDelete} handleStartEditing={handleStartEditing} />
+          {isFetching && (
+            <>
+              <SkeletonPost />
+              <SkeletonPost />
+              <SkeletonPost />
+            </>
+          )}
+          {!isFetching && data?.map((post) => (
+            <PostItem key={post.id} post={post} />
           ))}
         </div>
       </div>
