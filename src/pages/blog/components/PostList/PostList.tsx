@@ -1,6 +1,6 @@
 import PostItem from '../PostItem';
 import { useGetPostsQuery } from 'pages/blog/blog.service';
-import SkeletonPost from '../SkeletonPost';
+import SkeletonPost from '../SkeletonPost/SkeletonPost';
 
 export default function PostList() {
   // isLoading: chỉ dành cho lần gọi đầu tiên
