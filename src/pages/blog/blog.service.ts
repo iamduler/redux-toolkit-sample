@@ -45,14 +45,66 @@ import { Post } from 'types/blog.type'
 
 export const blogApi = createApi({
   reducerPath: 'blog',
+  tagTypes: ['Posts'], // tagTypes là các tag để đánh dấu các bài post
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3004' }),
   endpoints: (builder) => ({
 		// Generix type theo thứ tự là kiểu response trả về và arg
 		// Arg là tham số truyền vào
     getPosts: builder.query<Post[], void>({
-      query: () => 'posts',
+      query: () => 'posts', // method không có tham số
+      /**
+       * providesTags: có thể là array hoặc callback return array
+       * Nếu có bất kì một invalidateTags nào match với providesTags 
+       * => thì sẽ gọi lại API getPosts
+       * => và cập nhật lại danh sách các bài post cũng như các tags phía dưới
+       */
+      providesTags(result) {
+        /**
+         * Cái callback này sẽ chạy mỗi khi getPosts chạy
+         * Mong muốn là sẽ return về 1 mảng kiểu
+         * interface Tags : {
+         *  type: 'Posts',
+         *  id: string
+         * }[]
+         * vì thế phải thêm as const vào để báo hiệu type là Readonly, không thể mutate được
+         */
+        if (result) {
+          const final = [
+            ...result.map(({ id }) => ({ type: 'Posts' as const, id })),
+            { type: 'Posts' as const, id: 'LIST' },
+          ]
+          return final;
+        }
+
+        // return [{ type: 'Posts' as const, id: 'LIST' }];
+        const final = [
+          { type: 'Posts' as const, id: 'LIST' },
+        ]
+
+        return final;
+      },
+    }),
+    /**
+     * Chúng ta dùng mutation đối với các trường hợp thay đổi dữ liệu trên server như POST, PUT, DELETE
+     * Post: là kiểu dữ liệu trả về của API
+     * Omit<Post, 'id'>: là kiểu dữ liệu truyền vào
+     */
+    addPost: builder.mutation<Post, Omit<Post, 'id'>>({
+      query(body) {
+        return {
+          url: 'posts',
+          method: 'POST',
+          body,
+        }
+      },
+      /**
+       * invalidatesTags cung cấp các tags để báo hiệu cho những method nào có providesTags
+       * match với nó sẽ bị gọi lại
+       * Trong trường hợp này là getPosts
+       */
+      invalidatesTags: (result, error, body) => [{ type: 'Posts', id: 'LIST' }],
     }),
   }),
 })
 
-export const { useGetPostsQuery } = blogApi;
+export const { useGetPostsQuery, useAddPostMutation } = blogApi;
