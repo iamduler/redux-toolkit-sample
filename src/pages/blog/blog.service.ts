@@ -104,7 +104,28 @@ export const blogApi = createApi({
        */
       invalidatesTags: (result, error, body) => [{ type: 'Posts', id: 'LIST' }],
     }),
+    getPost: builder.query<Post, string>({
+      query: (id) => `posts/${id}`,
+    }),
+    updatePost: builder.mutation<Post, { id: string, body: Post }>({
+      query: (data) => ({
+        url: `posts/${data.id}`,
+        method: 'PUT',
+        body: data.body,
+      }),
+      // Tại sao là [{ type: 'Posts', id: data.id }] mà không phải là [{ type: 'Posts', id: 'LIST' }]
+      // Vì khi chúng ta update 1 bài post thì chúng ta chỉ cần cập nhật lại bài post đó
+      // Không cần phải cập nhật lại danh sách các bài post
+      invalidatesTags: (result, error, data) => [{ type: 'Posts', id: data.id }],
+    }),
+    deletePost: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `posts/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Posts', id }],
+    }),
   }),
 })
 
-export const { useGetPostsQuery, useAddPostMutation } = blogApi;
+export const { useGetPostsQuery, useAddPostMutation, useGetPostQuery, useUpdatePostMutation, useDeletePostMutation } = blogApi;

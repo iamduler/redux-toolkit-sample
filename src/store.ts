@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { blogApi } from './pages/blog/blog.service';
 import { setupListeners } from '@reduxjs/toolkit/query';
-// import blogReducer from './pages/blog/blog.slice';
+import blogReducer from './pages/blog/blog.slice';
 
 export const store = configureStore({
   reducer: {
-    // blog: blogReducer,
+    blogState: blogReducer,
     [blogApi.reducerPath]: blogApi.reducer, // Khai báo reducer path để RTK query có thể hoạt động
   },
   // Thêm middleware để enable các tính năng như caching, polling, invalidation, etc. của RTK query
